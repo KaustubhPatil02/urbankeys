@@ -10,6 +10,7 @@ export default function Index() {
         alignItems: "center",
       }}
     >
+      <Text className="text-gray-700 text-3xl font-bold">Welcome to UrbanKeys</Text>
       <Link href=".././sign-in">SignIn</Link>
       <Link href="./Explore">Explore</Link>
       <Link href="./Profile">Profile</Link>
