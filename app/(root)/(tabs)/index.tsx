@@ -10,7 +10,7 @@ export default function Index() {
         // alignItems: "center",
       }}
     >
-      <Text className="text-gray-700 text-3xl font-bold justify-center items-center px-11 py-3">Welcome to UrbanKeys</Text>
+      <Text className="items-center justify-center py-3 text-3xl text-gray-700 font-rubik px-11">Welcome to UrbanKeys</Text>
       <Link href=".././sign-in">SignIn</Link>
       <Link href="./Explore">Explore</Link>
       <Link href="./Profile">Profile</Link>
