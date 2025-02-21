@@ -1,4 +1,6 @@
-import {Account, Avatars, Client} from 'react-native-appwrite'
+import {Account, Avatars, Client, OAuthProvider} from 'react-native-appwrite'
+import * as Linking from 'expo-linking'
+
 export const config = {
     platform: 'com.company.urbankeys',
     endpoint: process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT,
@@ -16,7 +18,23 @@ export const account = new Account(client);
 
 export async function login(){
     try {
-        
+        const redirectURI = Linking.createURL('/login')
+        const response = await account.createOAuth2Token(OAuthProvider.Google, redirectURI)
+
+        if(!response) throw new Error('No response from Appwrite, Failed to Login');
+
+        const browserResult = await openAuthSessionAsync(
+            response.toString(),
+            redirectURI
+        )       
+
+        if (browserResult.type !== 'success') throw new Error('Browser result not successful')
+
+        const url = new URL(browserResult.url)
+        const secret = url.searchParams.get('secret')?.toString()
+        const userID = url.searchParams.get('userID')?.toString()
+
+        if(!secret || !userID) throw new Error('No secret or userID in URL')
         
     } catch (error) {
         console.log(error)
