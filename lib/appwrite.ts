@@ -35,17 +35,47 @@ export async function login(){
         const userID = url.searchParams.get('userID')?.toString()
 
         if(!secret || !userID) throw new Error('No secret or userID in URL')
+
+        const session = await account.createSession(userID, secret);
+        if(!session) throw new Error('No session created')
         
+            return true;
     } catch (error) {
         console.log(error)
         return false
     }
 }
 
-function setProject(arg0: string) {
-    throw new Error('Function not implemented.');
-}
-function setPlatform(arg0: string) {
-    throw new Error('Function not implemented.');
+// function setProject(arg0: string) {
+//     throw new Error('Function not implemented.');
+// }
+// function setPlatform(arg0: string) {
+//     throw new Error('Function not implemented.');
+// }
+
+export async function logout(){
+    try {
+        await account.deleteSession('current')
+        return true;
+    } catch (error) {
+        console.log(error)
+        return false;
+    }
 }
 
+
+export async function getUser(){
+    try {
+        const user = await account.get()
+        if(Response.$id){
+            const avatarURL = await avatar.getInitials(Response.name)
+        }
+        return {
+            ...Response,
+            avatarURL.toString(),
+        }
+    } catch (error) {
+        console.log(error)
+        return null
+    }
+}
