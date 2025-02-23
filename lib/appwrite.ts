@@ -1,5 +1,6 @@
-import {Account, Avatars, Client, OAuthProvider} from 'react-native-appwrite'
+import { Account, Avatars, Client, OAuthProvider } from 'react-native-appwrite'
 import * as Linking from 'expo-linking'
+import * as WebBrowser from 'expo-web-browser'  // Add this import
 
 export const config = {
     platform: 'com.company.urbankeys',
@@ -16,17 +17,17 @@ client
 export const avatar = new Avatars(client);
 export const account = new Account(client);
 
-export async function login(){
+export async function login() {
     try {
         const redirectURI = Linking.createURL('/login')
         const response = await account.createOAuth2Token(OAuthProvider.Google, redirectURI)
 
-        if(!response) throw new Error('No response from Appwrite, Failed to Login');
+        if (!response) throw new Error('No response from Appwrite, Failed to Login');
 
-        const browserResult = await openAuthSessionAsync(
+        const browserResult = await WebBrowser.openAuthSessionAsync(
             response.toString(),
             redirectURI
-        )       
+        )
 
         if (browserResult.type !== 'success') throw new Error('Browser result not successful')
 
@@ -34,26 +35,19 @@ export async function login(){
         const secret = url.searchParams.get('secret')?.toString()
         const userID = url.searchParams.get('userID')?.toString()
 
-        if(!secret || !userID) throw new Error('No secret or userID in URL')
+        if (!secret || !userID) throw new Error('No secret or userID in URL')
 
         const session = await account.createSession(userID, secret);
-        if(!session) throw new Error('No session created')
-        
-            return true;
+        if (!session) throw new Error('No session created')
+
+        return true;
     } catch (error) {
         console.log(error)
         return false
     }
 }
 
-// function setProject(arg0: string) {
-//     throw new Error('Function not implemented.');
-// }
-// function setPlatform(arg0: string) {
-//     throw new Error('Function not implemented.');
-// }
-
-export async function logout(){
+export async function logout() {
     try {
         await account.deleteSession('current')
         return true;
@@ -64,15 +58,15 @@ export async function logout(){
 }
 
 
-export async function getUser(){
+export async function getUser() {
     try {
-        const user = await account.get()
-        if(Response.$id){
-            const avatarURL = await avatar.getInitials(Response.name)
-        }
-        return {
-            ...Response,
-            avatarURL.toString(),
+        const response = await account.get()
+        if (response.$id) {
+            const avatarURL = await avatar.getInitials(response.name)
+            return {
+                ...response,
+                avatar: avatarURL.toString(),
+            }
         }
     } catch (error) {
         console.log(error)
